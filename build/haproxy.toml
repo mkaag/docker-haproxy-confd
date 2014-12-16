@@ -1,0 +1,9 @@
+[template]
+prefix      = "/services/haproxy"
+keys        = [ "/frontend", "/backend", "/stats" ]
+owner       = "root"
+mode        = "0644"
+src         = "haproxy.tmpl"
+dest        = "/etc/haproxy/haproxy.cfg"
+check_cmd   = "/usr/sbin/haproxy -c -f {{ .src }}"
+reload_cmd  = "/usr/sbin/service haproxy reload"
