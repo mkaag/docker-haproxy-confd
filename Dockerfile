@@ -29,7 +29,7 @@ ENV LC_ALL     en_US.UTF-8
 CMD ["/sbin/my_init"]
 
 # Haproxy Installation
-ENV CONFD_VERSION 0.7.0
+ENV CONFD_VERSION 0.7.1
 ENV SSL_CERT false
 
 RUN \
