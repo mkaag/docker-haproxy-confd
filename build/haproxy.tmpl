@@ -5,7 +5,7 @@ global
     chroot /var/lib/haproxy
     user haproxy
     group haproxy
-    {{ if exists "/frontend/https" }}
+    {{ if exists "/frontend/https/cert" }}
     tune.ssl.default-dh-param 1024
     ssl-default-bind-ciphers kEECDH+aRSA+AES:kRSA+AES:+AES256:RC4-SHA:!kEDH:!LOW:!EXP:!MD5:!aNULL:!eNULL
     ssl-default-bind-options no-sslv3
@@ -42,7 +42,7 @@ listen stats :1936
     option httpclose
     stats enable
     stats scope www_http
-    {{ if exists "/frontend/https" }}
+    {{ if exists "/frontend/https/cert" }}
     stats scope www_https
     {{ end }}
     {{ range $backend := lsdir "/backend" }}
@@ -60,7 +60,7 @@ listen stats :1936
 frontend www_http
     bind *:80
     reqadd X-Forwarded-Proto:\ http
-    {{ if exists "/frontend/https" }}
+    {{ if exists "/frontend/https/cert" }}
     redirect scheme https code 301 if !{ ssl_fc }
     {{ else }}
     {{ range $backend := lsdir "/backend" }}
@@ -70,7 +70,7 @@ frontend www_http
     {{ end }}
     {{ end }}
 
-{{ if exists "/frontend/https" }}
+{{ if exists "/frontend/https/cert" }}
 frontend www_https
     bind *:443 ssl crt {{ getv "/frontend/https/cert" }}
     tcp-request inspect-delay 5s
