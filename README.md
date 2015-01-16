@@ -39,3 +39,7 @@ etcdctl set /services/haproxy/backend/app2/hostname app2.domain.com
 etcdctl set /services/haproxy/backend/app2/endpoints/1 192.168.0.12:8001
 etcdctl set /services/haproxy/backend/app2/endpoints/2 192.168.0.13:8002
 ```
+
+### CoreOS service files
+
+Heads up to https://github.com/mkaag/coreos-services-tmpl for examples.
