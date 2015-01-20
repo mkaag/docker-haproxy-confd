@@ -17,6 +17,7 @@ defaults
 
     # Setting options
     option httplog
+    option logasap
     option dontlognull              # Disable logging of null connections as these can pollute the logs
     option redispatch               # Enable session redistribution in case of connection failure
     option tcp-smart-accept         # Performance tweak, saving one ACK packet during the accept sequence
@@ -40,6 +41,15 @@ defaults
 
 listen stats :1936
     option httpclose
+    capture request  header Host len 20
+    capture request  header Content-Length len 10
+    capture request  header Referer len 20
+    capture response header Server len 20
+    capture response header Content-Length len 10
+    capture response header Cache-Control len 8
+    capture response header Via len 20
+    capture response header Location len 20
+
     stats enable
     stats scope www_http
     {{ if exists "/frontend/https/cert" }}
@@ -48,10 +58,12 @@ listen stats :1936
     {{ range $backend := lsdir "/backend" }}
     stats scope {{ base $backend }}_cluster
     {{ end }}
+
     stats show-node
     stats show-legends
     stats refresh 20s
     stats uri /
+
     acl white_list src 127.0.0.1 {{ getv "/stats/white_list" }}
     tcp-request inspect-delay 2s
     tcp-request content accept if white_list
@@ -68,6 +80,15 @@ frontend www_http
     acl host_{{ base $backend }} hdr(host) -i {{ getv $hostname }}
     use_backend {{ base $backend }}_cluster if host_{{ base $backend }}
     {{ end }}
+    capture cookie SERVERID len 32
+    capture request  header Host len 20
+    capture request  header Content-Length len 10
+    capture request  header Referer len 20
+    capture response header Server len 20
+    capture response header Content-Length len 10
+    capture response header Cache-Control len 8
+    capture response header Via len 20
+    capture response header Location len 20
     {{ end }}
 
 {{ if exists "/frontend/https/cert" }}
@@ -81,6 +102,15 @@ frontend www_https
     acl host_{{ base $backend }} hdr(host) -i {{ getv $hostname }}
     use_backend {{ base $backend }}_cluster if host_{{ base $backend }}
     {{ end }}
+    capture cookie SERVERID len 32
+    capture request  header Host len 20
+    capture request  header Content-Length len 10
+    capture request  header Referer len 20
+    capture response header Server len 20
+    capture response header Content-Length len 10
+    capture response header Cache-Control len 8
+    capture response header Via len 20
+    capture response header Location len 20
 {{ end }}
 
 {{ range $backend := lsdir "/backend" }}
@@ -89,7 +119,7 @@ backend {{ base $backend }}_cluster
     balance roundrobin
     option httpclose
     option forwardfor
-    cookie SERVERID insert nocache indirect
+    cookie SERVERID insert nocache indirect httponly secure
     {{$id := printf .Key }}{{ with dir $id }}
     server {{ base $backend }}-{{ base $id  }} {{ getv $id }} cookie {{ base $backend }}-{{ base $id }} check
     {{ end }}

@@ -24,7 +24,7 @@ docker build -t mkaag/haproxy-confd github.com/mkaag/docker-haproxy-confd
 ```bash
 docker run -d -p 443:443 -p 80:80 -p 1936:1936 \
 -v /opt/apps/ssl:/etc/ssl \
-mkaag/haproxy-confd /sbin/my_init -- bash /usr/local/bin/confd-watch
+mkaag/haproxy-confd
 ```
 
 ### etcd structure

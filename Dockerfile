@@ -26,11 +26,8 @@ RUN locale-gen en_US.UTF-8
 ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
-CMD ["/sbin/my_init"]
-
 # Haproxy Installation
 ENV CONFD_VERSION 0.7.1
-ENV SSL_CERT false
 
 RUN \
     sed -i 's/^# \(.*-backports\s\)/\1/g' /etc/apt/sources.list && \
@@ -41,25 +38,26 @@ RUN \
 
 RUN \
     apt-get install -qqy --no-install-recommends haproxy; \
-    sed -i 's/^ENABLED=.*/ENABLED=1/' /etc/default/haproxy; \
-    sed -i 's/^#$ModLoad imudp/$ModLoad imudp/' /etc/rsyslog.conf; \
-    sed -i 's/^#$UDPServerRun 514/$UDPServerRun 514/' /etc/rsyslog.conf; \
-    sed -i '/$UDPServerRun 514/a \$UDPServerAddress 127.0.0.1' /etc/rsyslog.conf; \
     touch /var/log/haproxy.log; \
     chown haproxy: /var/log/haproxy.log
 
-ADD build/confd-watch /usr/local/bin/confd-watch
+ADD build/syslog-ng.conf /etc/syslog-ng/conf.d/haproxy.conf
 ADD build/haproxy.toml /etc/confd/conf.d/haproxy.toml
 ADD build/haproxy.tmpl /etc/confd/templates/haproxy.tmpl
 
 WORKDIR /usr/local/bin
 RUN \
     curl -s -L https://github.com/kelseyhightower/confd/releases/download/v$CONFD_VERSION/confd-$CONFD_VERSION-linux-amd64 -o confd; \
-    chmod +x confd; \
-    chmod +x confd-watch
+    chmod +x confd
+
+RUN mkdir /etc/service/haproxy
+ADD build/haproxy.sh /etc/service/haproxy/run
+RUN chmod +x /etc/service/haproxy/run
 
 EXPOSE 80 443 1936
 VOLUME ["/etc/ssl"]
+
+CMD ["/sbin/my_init"]
 # End Haproxy
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
