@@ -33,7 +33,6 @@ defaults
     timeout server           15s
     timeout http-keep-alive   1s
     timeout check             2s
-    retries                   3
 
     # Slowloris protection
     timeout http-request     10s     # Slowloris protection
@@ -73,9 +72,12 @@ frontend www_http
     option forwardfor
     option http-server-close
     {{ range $backend := lsdir "/backend" }}
+    {{ $endpoint := printf "/backend/%s/endpoints" $backend }}
+    {{ if gt ( len ( ls $endpoint ) ) 0 }}
     {{ $hostname := printf "/backend/%s/hostname" $backend }}
     acl host_{{ base $backend }} hdr(host) -i {{ getv $hostname }}
     use_backend {{ base $backend }}_cluster if host_{{ base $backend }}
+    {{ end }}
     {{ end }}
     capture cookie  SERVERID                     len 32
     capture request header Referer               len 64
@@ -95,9 +97,12 @@ frontend www_https
     tcp-request content accept if { req_ssl_hello_type 1 }
     reqadd X-Forwarded-Proto:\ https
     {{ range $backend := lsdir "/backend" }}
+    {{ $endpoint := printf "/backend/%s/endpoints" $backend }}
+    {{ if gt ( len ( ls $endpoint ) ) 0 }}
     {{ $hostname := printf "/backend/%s/hostname" $backend }}
     acl host_{{ base $backend }} hdr(host) -i {{ getv $hostname }}
     use_backend {{ base $backend }}_cluster if host_{{ base $backend }}
+    {{ end }}
     {{ end }}
     capture cookie  SERVERID                     len 32
     capture request header Referer               len 64
@@ -108,12 +113,23 @@ frontend www_https
 {{ end }}
 
 {{ range $backend := lsdir "/backend" }}
-{{ $endpoints := printf "/backend/%s/endpoints/*" $backend }}{{ range gets $endpoints }}
+{{ $endpoint := printf "/backend/%s/endpoints" $backend }}
+{{ if gt ( len ( ls $endpoint ) ) 0 }}
 backend {{ base $backend }}_cluster
+    {{ if gt ( len ( ls $endpoint ) ) 1 }}
     balance roundrobin
     cookie SERVERID insert indirect
-    {{$id := printf .Key }}{{ with dir $id }}
+    {{ $endpoints := printf "/backend/%s/endpoints/*" $backend }}{{ range gets $endpoints }}
+    {{ $id := printf .Key }}{{ with dir $id }}
     server {{ base $backend }}-{{ base $id  }} {{ getv $id }} cookie {{ base $backend }}-{{ base $id }} check
+    {{ end }}
+    {{ end }}
+    {{ else }}
+    {{ $endpoints := printf "/backend/%s/endpoints/*" $backend }}{{ range gets $endpoints }}
+    {{ $id := printf .Key }}{{ with dir $id }}
+    server {{ base $backend }} {{ getv $id }}
+    {{ end }}
+    {{ end }}
     {{ end }}
 {{ end }}
 {{ end }}
