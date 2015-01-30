@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -eo pipefail
 
@@ -23,7 +23,4 @@ echo "[haproxy] confd is now monitoring etcd for changes..."
 
 # Start the Haproxy service using the generated config
 echo "[haproxy] starting haproxy service..."
-service haproxy start
-
-# Follow the logs to allow the script to continue running
-tail -f /var/log/haproxy.log
+exec /usr/sbin/haproxy -f /etc/haproxy/haproxy.cfg
