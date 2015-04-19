@@ -27,7 +27,7 @@ ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
 # Haproxy Installation
-ENV CONFD_VERSION 0.7.1
+ENV CONFD_VERSION 0.9.0
 
 RUN \
     sed -i 's/^# \(.*-backports\s\)/\1/g' /etc/apt/sources.list && \
