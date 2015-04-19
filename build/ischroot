@@ -1,7 +1,0 @@
-#!/bin/sh
-
-if [ -z "$FAKE_CHROOT" ]; then
-  exec /usr/bin/ischroot.original
-else 
-  exit 0
-fi
