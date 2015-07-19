@@ -27,6 +27,19 @@ docker run -d -p 443:443 -p 80:80 -p 1936:1936 \
 mkaag/haproxy-confd
 ```
 
+### PEM order
+
+-----BEGIN MY CERTIFICATE-----
+-----END MY CERTIFICATE-----
+-----BEGIN INTERMEDIATE CERTIFICATE-----
+-----END INTERMEDIATE CERTIFICATE-----
+-----BEGIN INTERMEDIATE CERTIFICATE-----
+-----END INTERMEDIATE CERTIFICATE-----
+-----BEGIN ROOT CERTIFICATE-----
+-----END ROOT CERTIFICATE-----
+-----BEGIN RSA PRIVATE KEY-----
+-----END RSA PRIVATE KEY-----
+
 ### etcd structure
 
 ```bash
