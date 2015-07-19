@@ -29,6 +29,7 @@ mkaag/haproxy-confd
 
 ### PEM order
 
+```bash
 -----BEGIN MY CERTIFICATE-----
 -----END MY CERTIFICATE-----
 -----BEGIN INTERMEDIATE CERTIFICATE-----
@@ -39,6 +40,7 @@ mkaag/haproxy-confd
 -----END ROOT CERTIFICATE-----
 -----BEGIN RSA PRIVATE KEY-----
 -----END RSA PRIVATE KEY-----
+´´´
 
 ### etcd structure
 
