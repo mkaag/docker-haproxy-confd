@@ -40,7 +40,7 @@ mkaag/haproxy-confd
 -----END ROOT CERTIFICATE-----
 -----BEGIN RSA PRIVATE KEY-----
 -----END RSA PRIVATE KEY-----
-´´´
+```
 
 ### etcd structure
 
