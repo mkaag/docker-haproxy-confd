@@ -2,6 +2,7 @@ docker-haproxy-confd
 ====================
 
 [![Docker Hub](https://img.shields.io/badge/docker-mkaag%2Fhaproxy--confd-008bb8.svg)](https://registry.hub.docker.com/u/mkaag/haproxy-confd/)
+[![](https://badge.imagelayers.io/mkaag/haproxy-confd:latest.svg)](https://imagelayers.io/?images=mkaag/haproxy-confd:latest 'Get your own badge on imagelayers.io')
 
 This repository contains the **Dockerfile** and the configuration files to build a Load Balancer based on Haproxy for [Docker](https://www.docker.com/).
 The configuration is performed with [confd](https://github.com/kelseyhightower/confd).
